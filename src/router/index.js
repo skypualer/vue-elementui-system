@@ -1,3 +1,4 @@
+import { from } from 'core-js/core/array'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
@@ -27,7 +28,13 @@ const routes = [{
     {
         path: '/home',
         name: 'Home',
-        component: Home
+        component: Home,
+        children: [{
+            path: '/user',
+            name: 'User',
+            component: () =>
+                import ('../components/user/Users.vue')
+        }]
     }
 ]
 
@@ -37,4 +44,18 @@ const router = new VueRouter({
     routes
 })
 
+//路由全局守卫
+router.beforeEach((to, form, next) => {
+    if (to.path = '/') {
+        next()
+
+    } else {
+        const token = window.sessionStorage.getItem("token");
+        if (!token) {
+            next("/login")
+        } else {
+            next()
+        }
+    }
+})
 export default router
